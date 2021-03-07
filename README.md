@@ -1,6 +1,6 @@
-# SokobanC
+# TuringC
 
-SokobanC is a great Sokoban written in C!
+TuringC is a Turing machine simulator written in C.
 
 ## Dependencies
 
@@ -25,7 +25,7 @@ conan config set general.revisions_enabled=1
 
 ```bash
 git clone
-cd sokobanc
+cd turingc
 mkdir build
 conan install ..
 cmake ..
