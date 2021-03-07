@@ -227,6 +227,8 @@ bool tm_parse_tape(TuringMachine* tm, const char* tape_content) {
       case '>':
         tm->head = normalize_h(pos_on_tape);
         break;
+      case ' ':
+        continue;
       default:
         printf("Unexpected character on tape: `%c`. Abort.\n",
                tape_content[i_char]);

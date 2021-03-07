@@ -11,6 +11,8 @@
 #define MAX_NB_STATES 1000
 #define LINE_BUFFER_SIZE 200
 
+static const uint8_t NOTHING_ON_TAPE = 3;
+
 static const uint8_t FLAG_SET[2] = {1 << 0, 1 << 1};
 static const uint8_t FLAG_WRITE[2] = {1 << 2, 1 << 4};
 static const uint8_t FLAG_MOVE[2] = {1 << 3, 1 << 5};
@@ -46,4 +48,5 @@ bool tm_init(TuringMachine* tm, const char* machine_desc_path,
 bool tm_next(TuringMachine* tm);
 void tm_print_tape(const TuringMachine* tm);
 
+int de_normalize_h(size_t normalised_head_position);
 size_t normalize_h(int head_position);

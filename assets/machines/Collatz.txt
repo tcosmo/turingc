@@ -1,6 +1,91 @@
-A: 
-  1, L, B
-  0, R, C
-B: 
-  0, R, E
-  0, L, C
+start_copy:
+  1, L, copy_zero_ignore
+  0, L, copy_one_ignore
+
+start_copy_ignore:
+  0, L, start_copy
+  1, L, start_copy
+
+copy_one_ignore:
+  0, L, copy_one
+  1, L, copy_one
+
+copy_zero_ignore:
+  0, L, copy_zero
+  1, L, copy_zero
+
+copy_one:
+  0, L, copy_one_check_bit_0
+  1, L, copy_one
+
+copy_zero:
+  0, L, copy_zero_check_bit_0
+  1, L, copy_zero
+
+copy_one_check_bit_0:
+  0, L, copy_one
+  1, L, copy_one_action
+
+copy_zero_check_bit_0:
+  0, L, copy_zero
+  1, L, copy_zero_action
+
+copy_one_action_ignore:
+  0, L, copy_one_action
+  1, L, copy_one_action
+
+copy_zero_action_ignore:
+  0, L, copy_zero_action
+  1, L, copy_zero_action
+
+copy_one_action:
+  0, L, copy_one_action_ignore
+  1, L, copy_one_action_check_bit_1
+
+copy_zero_action:
+  0, L, copy_zero_action_ignore
+  1, L, copy_zero_action_check_bit_1
+
+copy_one_action_check_bit_1:
+  1, L, copy_expand
+  1, L, copy_one_action
+
+copy_zero_action_check_bit_1:
+  0, R, copy_zero_action_copy_zero
+  1, L, copy_zero_action
+
+copy_zero_action_copy_zero:
+  0, L, copy_expand
+  0, L, copy_zero_action_copy_zero
+
+copy_expand:
+  1, L, copy_expand_bis
+  1, L, copy_expand_bis
+
+copy_expand_bis:
+  0, R, copy_rewind_ignore
+  0, R, copy_rewind_ignore
+
+copy_rewind_ignore:
+  0, R, copy_rewind
+  1, R, copy_rewind
+
+copy_rewind:
+  0, R, copy_rewind_ignore
+  1, R, copy_rewind_check_bit_1
+
+copy_rewind_check_bit_1:
+  0, R, copy_rewind_first_mark
+  1, R, copy_rewind
+
+copy_rewind_first_mark_check_bit_0:
+  0, R, copy_rewind_first_mark
+  0, L, start_copy_ignore
+
+copy_rewind_first_mark_check_bit_1:
+  1, L, start_copy_ignore
+  1, R, copy_rewind_first_mark
+
+copy_rewind_first_mark:
+  0, R, copy_rewind_first_mark_check_bit_0
+  1, R, copy_rewind_first_mark_check_bit_1
