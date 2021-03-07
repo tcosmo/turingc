@@ -1,0 +1,23 @@
+even_first_bit:
+  0, R, even_check_second_bit_0
+  1, R, odd_check_second_bit_1
+
+even_check_second_bit_0:
+  0, R, even_first_bit
+  -
+
+even_check_second_bit_1:
+  -
+  1, R, even_first_bit
+
+odd_first_bit:
+  0, R, odd_check_second_bit_0
+  1, R, even_check_second_bit_1
+
+odd_check_second_bit_0:
+  0, R, odd_first_bit
+  -
+
+odd_check_second_bit_1:
+  -
+  1, R, odd_first_bit

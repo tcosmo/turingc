@@ -1,0 +1,7 @@
+even:
+  0, R, even
+  1, R, odd
+    
+odd:
+  0, R, odd
+  1, R, even

@@ -1,0 +1,20 @@
+{
+  "editor.formatOnSave": true,
+  "editor.formatOnType": false,
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "clang-format.fallbackStyle": "google",
+  "clang-format.assumeFilename": ".clang-format",
+  "C_Cpp.default.cStandard": "c11",
+  "C_Cpp.default.includePath": ["${workspaceFolder}/**", "~/.conan/data/**"],
+  "files.associations": {
+    "*.tm": "yaml",
+    "game.h": "c",
+    "world.h": "c",
+    "world_parser.h": "c",
+    "sstream": "c",
+    "sdl_image.h": "c",
+    "cstring": "cpp",
+    "string.h": "c"
+  }
+}
