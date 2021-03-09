@@ -58,9 +58,13 @@ rewind_check_bit_0:
     0, R, rewind
     1, R, bounce_back
 
+rewind_check_bit_1:
+    0, R, bounce_back_Collatz
+    1, R, rewind
+
 rewind:
     0, R, rewind_check_bit_0
-    1, R, rewind_ignore
+    1, R, rewind_check_bit_1
 
 bounce_back_check_second_bit_0:
     0, R, bounce_back
@@ -88,12 +92,12 @@ bounce_back_check_copy_bit_0:
     -
 
 bounce_back_check_copy_bit_1:
-    0, R, bounce_back_Collatz_ignore
+    1, R, bounce_back_Collatz_ignore
     1, R, cz_start_bouncing
 
 bounce_back_Collatz_ignore:
     -
-    1, R, bounce_back_Collatz
+    0, R, bounce_back_Collatz
 
 bounce_back_Collatz:
     0, R, bounce_back_Collatz_check_second_bit_0
@@ -120,10 +124,63 @@ wait_for_Collatz_ignore:
     1, L, wait_for_Collatz
 
 wait_for_Collatz:
-    0, L, wait_for_Collatz_ignore
-    1, L, wait_for_Collatz_check_second_bit_1
+    0, L, wait_for_Collatz_check_second_bit_0
+    1, L, wait_for_Collatz_ignore
 
-wait_for_Collatz_check_second_bit_1:
-; Collatz will start here
-    0, R, bounce_back_Collatz_ignore
-    1, L, wait_for_Collatz
+wait_for_Collatz_check_second_bit_0:
+    0, L, wait_for_Collatz
+    1, L, Collatz_start_ignore_trailing_zeros
+
+Collatz_start_ignore_trailing_zeros:
+    0, L, Collatz_start_ignore_trailing_zeros
+    0, L, Collatz_state_0_carry_1_read_1
+
+Collatz_state_0_carry_0:
+    0, L, Collatz_state_0_carry_0_read_0
+    1, L, Collatz_state_0_carry_0_read_1
+
+Collatz_state_0_carry_0_read_0:
+    0, L, Collatz_state_0_carry_0
+    -
+
+Collatz_state_0_carry_0_read_1:
+    -
+    1, L, Collatz_state_1_carry_0
+
+Collatz_state_0_carry_1:
+    1, L, Collatz_state_0_carry_1_read_0
+    0, L, Collatz_state_0_carry_1_read_1
+
+Collatz_state_0_carry_1_read_0:
+    1, L, Collatz_state_0_carry_0
+    1, L, expand
+
+Collatz_state_0_carry_1_read_1:
+; we use this first rw-instruction to write the ending pattern of 1 with a carry
+    1, L, expand
+    0, L, Collatz_state_1_carry_1
+
+Collatz_state_1_carry_0:
+    1, L, Collatz_state_1_carry_0_read_0
+    0, L, Collatz_state_1_carry_0_read_1
+
+Collatz_state_1_carry_0_read_0:
+    1, L, Collatz_state_0_carry_0
+    1, L, expand
+
+Collatz_state_1_carry_0_read_1:
+; we use this first rw-instruction to write the ending pattern of 1 with a carry
+    1, L, Collatz_state_0_carry_1_read_1
+    0, L, Collatz_state_1_carry_1
+
+Collatz_state_1_carry_1:
+    0, L, Collatz_state_1_carry_1_read_0
+    1, L, Collatz_state_1_carry_1_read_1
+
+Collatz_state_1_carry_1_read_0:
+    0, L, Collatz_state_0_carry_1
+    0, L, Collatz_state_1_carry_0_read_1
+
+Collatz_state_1_carry_1_read_1:
+    -
+    1, L, Collatz_state_1_carry_1

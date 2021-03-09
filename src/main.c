@@ -12,7 +12,8 @@ int main(int argc, char** argv) {
 
   int nb_steps = 0;
 
-  // while (strcmp(tm.pc->state_name, "start_Collatz") != 0) {
+  // while (strcmp(tm.pc->state_name, "Collatz_start_ignore_trailing_zeros") !=
+  //        0) {
   //   tm_next(&tm);
   //   nb_steps += 1;
   // }
