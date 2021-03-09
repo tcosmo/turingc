@@ -8,8 +8,7 @@ int run_simulator(TuringMachine* tm, int nb_steps) {
   SDL_Init(SDL_INIT_VIDEO);
 
   window =
-      SDL_CreateWindow("Turing Machine", SDL_WINDOWPOS_UNDEFINED,
-                       SDL_WINDOWPOS_UNDEFINED, 960, 740, SDL_WINDOW_OPENGL);
+      SDL_CreateWindow("Turing Machine", 0, 0, 960, 740, SDL_WINDOW_OPENGL);
 
   if (window == NULL) {
     printf("Could not create window: %s\n", SDL_GetError());
@@ -27,11 +26,10 @@ int run_simulator(TuringMachine* tm, int nb_steps) {
 
   TuringMachineView view;
   tm_view_init(&view, tm, renderer);
-  printf("Current state: `%s`\n", tm->pc->state_name);
+
   bool simulation_running = true;
 
-  for (int i_step = 0; i_step < nb_steps; i_step += 1) tm_next(tm);
-
+  printf("Current state: `%s`\n", tm->pc->state_name);
   while (simulation_running) {
     SDL_Event event;
     if (SDL_PollEvent(&event)) {
@@ -58,6 +56,10 @@ int run_simulator(TuringMachine* tm, int nb_steps) {
               nb_steps += 1;
               printf("Current state: `%s`\n", tm->pc->state_name);
             }
+            break;
+
+          case SDLK_r:
+            tm_reload(tm);
             break;
 
           case SDLK_z:

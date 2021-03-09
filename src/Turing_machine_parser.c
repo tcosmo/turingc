@@ -178,7 +178,9 @@ bool tm_parse(TuringMachine* tm, const char* machine_desc_path,
       if (!goto_points_to) {
         // Special case for 'H' shortcut for halts
         if (strcmp(tm->states[i_state].instr_goto[read_1].goto_state_name,
-                   "H") == 0) {
+                   "H") == 0 ||
+            strcmp(tm->states[i_state].instr_goto[read_1].goto_state_name,
+                   "h") == 0) {
           memcpy(tm->states[i_state].instr_goto[read_1].goto_state_name, "halt",
                  LINE_BUFFER_SIZE);
           tm->states[i_state].instr_goto[read_1].goto_ = tm->states;

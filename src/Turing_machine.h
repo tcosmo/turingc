@@ -47,6 +47,7 @@ bool tm_init(TuringMachine* tm, const char* machine_desc_path,
              const char* initial_tape);
 bool tm_next(TuringMachine* tm);
 void tm_print_tape(const TuringMachine* tm);
+bool tm_reload(TuringMachine* tm);
 
 int de_normalize_h(size_t normalised_head_position);
 size_t normalize_h(int head_position);

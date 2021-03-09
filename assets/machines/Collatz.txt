@@ -1,18 +1,39 @@
+; We can start the copy iff
+; the two bits are the same
+; if they are not the same, copy is over
+; and it is time to start Collatz
+start_copy_check:
+  0, L, start_copy_check_0
+  1, L, start_copy_check_1
+
+start_copy_check_0:
+  0, R, start_copy
+  0, R, flip_instruction_bit_from_copy
+
+flip_instruction_bit_from_copy:
+  1, L, flip_instruction_bit_from_copy_ignore
+  -
+
+flip_instruction_bit_from_copy_ignore:
+  0, L, start_Collatz
+  -
+  
+start_copy_check_1:
+  -
+  1, R, start_copy
+
+start_copy_check_ignore:
+  0, L, start_copy_check
+  1, L, start_copy_check
+
+; The copying algorithm
 start_copy:
-  1, L, copy_zero_ignore
-  0, L, copy_one_ignore
+  1, L, copy_ignore_first_step
+  0, L, copy_ignore_first_step
 
-start_copy_ignore:
-  0, L, start_copy
-  1, L, start_copy
-
-copy_one_ignore:
-  0, L, copy_one
-  1, L, copy_one
-
-copy_zero_ignore:
+copy_ignore_first_step:
   0, L, copy_zero
-  1, L, copy_zero
+  1, L, copy_one
 
 copy_one:
   0, L, copy_one_check_bit_0
@@ -39,53 +60,188 @@ copy_zero_action_ignore:
   1, L, copy_zero_action
 
 copy_one_action:
-  0, L, copy_one_action_ignore
-  1, L, copy_one_action_check_bit_1
+  0, L, copy_one_action_check_bit_1
+  1, L, copy_one_action_ignore
 
 copy_zero_action:
-  0, L, copy_zero_action_ignore
-  1, L, copy_zero_action_check_bit_1
+  0, L, copy_zero_action_check_bit_1
+  1, L, copy_zero_action_ignore
 
 copy_one_action_check_bit_1:
-  1, L, copy_expand
+  1, L, expand
   1, L, copy_one_action
 
 copy_zero_action_check_bit_1:
-  0, R, copy_zero_action_copy_zero
-  1, L, copy_zero_action
+  0, R, copy_zero_action
+  1, L, copy_zero_action_copy_zero
 
 copy_zero_action_copy_zero:
-  0, L, copy_expand
+  0, L, expand
   0, L, copy_zero_action_copy_zero
 
-copy_expand:
-  1, L, copy_expand_bis
-  1, L, copy_expand_bis
+expand:
+  1, L, expand_bis
+  1, L, expand_bis
 
-copy_expand_bis:
-  0, R, copy_rewind_ignore
-  0, R, copy_rewind_ignore
+expand_bis:
+  0, R, rewind_ignore
+  0, R, rewind_ignore
 
-copy_rewind_ignore:
-  0, R, copy_rewind
-  1, R, copy_rewind
+rewind_ignore:
+  0, R, rewind
+  1, R, rewind
 
-copy_rewind:
-  0, R, copy_rewind_ignore
-  1, R, copy_rewind_check_bit_1
+rewind:
+  0, R, rewind_check_bit_0
+  1, R, rewind_check_bit_1
 
-copy_rewind_check_bit_1:
+rewind_check_bit_0:
+  0, R, rewind
+  1, R, Collatz_rewind_first_mark
+
+rewind_check_bit_1:
   0, R, copy_rewind_first_mark
-  1, R, copy_rewind
+  1, R, rewind
 
 copy_rewind_first_mark_check_bit_0:
   0, R, copy_rewind_first_mark
-  0, L, start_copy_ignore
+  1, L, start_copy_check_ignore
 
 copy_rewind_first_mark_check_bit_1:
-  1, L, start_copy_ignore
+  0, L, start_copy_check_ignore
   1, R, copy_rewind_first_mark
 
 copy_rewind_first_mark:
   0, R, copy_rewind_first_mark_check_bit_0
   1, R, copy_rewind_first_mark_check_bit_1
+
+; Running Collatz
+start_Collatz:
+  0, L, start_Collatz_check_0
+  0, L, Collatz_state_0_carry_read_1
+
+; ignoring trailing 0s
+start_Collatz_check_0:
+  0, L, start_Collatz
+  -
+
+; 0 no carry
+Collatz_state_0_no_carry:
+  0, L, Collatz_state_0_no_carry_read_0
+  1, L, Collatz_state_0_no_carry_read_1
+
+Collatz_state_0_no_carry_read_0:
+  0, L, Collatz_state_0_no_carry
+  -
+
+Collatz_state_0_no_carry_read_1:
+  -
+  1, L, Collatz_state_1_no_carry
+
+
+; 0 carry
+Collatz_state_0_carry:
+  1, L, Collatz_state_0_carry_read_0
+  0, L, Collatz_state_0_carry_read_1
+
+Collatz_state_0_carry_read_0:
+  1, L, Collatz_state_0_no_carry
+  -
+
+Collatz_state_0_carry_read_1:
+  -
+  0, L, Collatz_state_1_carry
+
+; 1 no carry
+Collatz_state_1_no_carry:
+  1, L, Collatz_state_1_no_carry_read_0
+  0, L, Collatz_state_1_no_carry_read_1
+
+Collatz_state_1_no_carry_read_0:
+  1, L, Collatz_state_0_no_carry
+  -
+
+Collatz_state_1_no_carry_read_1:
+  0, L, Collatz_end_sequence_1_1_C
+  0, L, Collatz_state_1_carry
+
+; 1 carry
+Collatz_state_1_carry:
+  0, L, Collatz_state_1_carry_read_0
+  1, L, Collatz_state_1_carry_read_1
+
+Collatz_state_1_carry_read_0:
+  0, L, Collatz_state_0_carry
+  -
+
+Collatz_state_1_carry_read_1:
+  0, R, Collatz_end_sequence_1_1_A
+  1, L, Collatz_state_1_carry
+
+Collatz_end_sequence_1_1_A:
+  0, L, Collatz_end_sequence_1_1_B
+  0, L, Collatz_end_sequence_1_1_B
+
+Collatz_end_sequence_1_1_B:
+  0, L, Collatz_end_sequence_1_1_C
+  -
+
+Collatz_end_sequence_1_1_C:
+  1, L, Collatz_end_sequence_1_1_D
+  1, L, Collatz_end_sequence_1_1_D
+
+Collatz_end_sequence_1_1_D:
+  1, L, expand
+  1, L, expand
+
+Collatz_rewind_first_mark_check0:
+  1, R, Collatz_check_go_back_pattern
+  1, R, Collatz_rewind_first_mark
+
+Collatz_rewind_first_mark:
+  0, R, Collatz_go_back_write_0
+  1, R, Collatz_rewind_first_mark_check0
+
+; we go back iff we don't see 10 00
+Collatz_check_go_back_pattern:
+  0, L, Collatz_go_back
+  1, R, Collatz_check_go_back_pattern_B
+
+Collatz_check_go_back_pattern_B:
+  0, R, Collatz_check_go_back_pattern_C
+  -
+
+Collatz_check_go_back_pattern_C:
+  0, R, Collatz_check_go_back_pattern_D
+  1, L, Collatz_go_back_go_back
+
+Collatz_check_go_back_pattern_D:
+  -
+  1, L, Collatz_go_back_go_back_go_back
+
+Collatz_go_back_write_0:
+  0, R, Collatz_rewind_first_mark
+  0, R, Collatz_go_back_ignore
+
+Collatz_go_back_ignore:
+  0, L, Collatz_go_back
+  1, L, Collatz_go_back
+
+Collatz_go_back_check1:
+  0, L, start_Collatz
+  1, L, Collatz_go_back
+
+Collatz_go_back:
+  0, L, Collatz_go_back_ignore
+  1, L, Collatz_go_back_check1
+
+Collatz_go_back_go_back:
+  -
+  -
+
+Collatz_go_back_go_back_go_back:
+  0, L, Collatz_go_back
+  -
+
+
+

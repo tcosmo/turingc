@@ -9,10 +9,10 @@ void tm_view_init(TuringMachineView* view, const TuringMachine* tm,
                    (tm->head * TAPE_REDUNDANCY_SPACE) / REDUNDANCY;
   view->camera.y = 200;
 
-  view->camera.scale = 0.296296;
+  view->camera.scale = 0.197531;
   SDL_RenderSetScale(view->renderer, view->camera.scale, view->camera.scale);
-  view->camera.x = 598800;
-  view->camera.y = 1000;
+  view->camera.x = 597100;
+  view->camera.y = 1800;
 }
 
 void tm_view_render(TuringMachineView* view) {

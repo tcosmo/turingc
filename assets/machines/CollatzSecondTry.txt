@@ -1,0 +1,129 @@
+; cz stands for counter zone
+cz_start_bouncing:
+    0, L, bounce_check_second_bit_and_modify
+    1, L, bounce_check_second_bit_and_modify
+
+bounce_check_second_bit_and_modify:
+    1, L, bounce_hold_0_read_first_bit
+    0, L, bounce_hold_1_read_first_bit
+
+; Holding a 0
+    bounce_hold_0_check_second_bit_0:
+        0, L, bounce_hold_0_read_first_bit
+; also copies a zero
+        0, L, expand 
+
+    bounce_hold_0_check_second_bit_1:
+        0, L, bounce_hold_0_read_first_bit
+        1, L, bounce_hold_0_read_first_bit
+
+    bounce_hold_0_read_first_bit:
+        0, L, bounce_hold_0_check_second_bit_0
+        1, L, bounce_hold_0_check_second_bit_1
+
+; Holding a 1
+    bounce_hold_1_read_first_bit:
+        0, L, bounce_hold_1_check_second_bit_0
+        1, L, bounce_hold_1_check_second_bit_1
+
+    bounce_hold_1_rewrite_bit_1:
+        1, L, bounce_hold_1_rewrite_bit_1_ignore
+        -
+    
+    bounce_hold_1_rewrite_bit_1_ignore:
+        0, L, expand
+        1, L, expand
+
+    bounce_hold_1_check_second_bit_0:
+        0, L, bounce_hold_1_read_first_bit
+        1, R, bounce_hold_1_rewrite_bit_1
+
+    bounce_hold_1_check_second_bit_1:
+        0, L, bounce_hold_1_read_first_bit
+        1, L, bounce_hold_1_read_first_bit    
+
+expand:
+    0, L, expand_bis
+    0, L, expand_bis
+
+expand_bis:
+    1, R, rewind_ignore
+    1, R, rewind_ignore
+
+rewind_ignore:
+    0, R, rewind
+    1, R, rewind
+
+rewind_check_bit_0:
+    0, R, rewind
+    1, R, bounce_back
+
+rewind:
+    0, R, rewind_check_bit_0
+    1, R, rewind_ignore
+
+bounce_back_check_second_bit_0:
+    0, R, bounce_back
+    1, L, bounce_back_check_copy_ignore
+
+bounce_back_check_second_bit_1:
+    0, L, bounce_back_check_copy_ignore
+    1, R, bounce_back
+
+bounce_back:
+    0, R, bounce_back_check_second_bit_0
+    1, R, bounce_back_check_second_bit_1
+
+; could be also used to write back the bit
+bounce_back_check_copy_ignore:
+    0, L, bounce_back_check_copy
+    1, L, bounce_back_check_copy
+
+bounce_back_check_copy:
+    0, L, bounce_back_check_copy_bit_0
+    1, L, bounce_back_check_copy_bit_1
+
+bounce_back_check_copy_bit_0:
+    0, R, cz_start_bouncing
+    -
+
+bounce_back_check_copy_bit_1:
+    0, R, bounce_back_Collatz_ignore
+    1, R, cz_start_bouncing
+
+bounce_back_Collatz_ignore:
+    -
+    1, R, bounce_back_Collatz
+
+bounce_back_Collatz:
+    0, R, bounce_back_Collatz_check_second_bit_0
+    1, R, bounce_back_Collatz_check_second_bit_1
+
+bounce_back_Collatz_check_second_bit_0:
+    0, R, bounce_back_Collatz
+    0, R, check_if_one_more_iteration
+
+bounce_back_Collatz_check_second_bit_1:
+    1, R, check_if_one_more_iteration
+    1, R, bounce_back_Collatz
+
+check_if_one_more_iteration:
+    0, L, wait_for_Collatz
+    1, R, check_if_one_more_iteration_bis
+
+check_if_one_more_iteration_bis:
+    0, L, wait_for_Collatz_ignore
+    -
+
+wait_for_Collatz_ignore:
+    0, L, wait_for_Collatz
+    1, L, wait_for_Collatz
+
+wait_for_Collatz:
+    0, L, wait_for_Collatz_ignore
+    1, L, wait_for_Collatz_check_second_bit_1
+
+wait_for_Collatz_check_second_bit_1:
+; Collatz will start here
+    0, R, bounce_back_Collatz_ignore
+    1, L, wait_for_Collatz

@@ -37,6 +37,10 @@ void tm_print_tape(const TuringMachine* tm) {
 
 bool tm_init(TuringMachine* tm, const char* machine_desc_path,
              const char* initial_tape) {
+  tm->machine_desc_path = machine_desc_path;
+  tm->initial_tape = initial_tape;
+  tm->nb_states = 0;
+
   FILE* machine_desc_file = fopen(machine_desc_path, "r");
   if (machine_desc_file == NULL) {
     printf("Cannot open machine file `%s`.\n", machine_desc_path);
@@ -51,6 +55,10 @@ bool tm_init(TuringMachine* tm, const char* machine_desc_path,
   fclose(machine_desc_file);
 
   return true;
+}
+
+bool tm_reload(TuringMachine* tm) {
+  return tm_init(tm, tm->machine_desc_path, tm->initial_tape);
 }
 
 bool tm_next(TuringMachine* tm) {
